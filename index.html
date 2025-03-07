@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big Timer Clone</title>
+    <style>
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #000;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            margin: 0;
+        }
+        #timer {
+            font-size: 20rem;
+            font-weight: bold;
+            margin: 20px;
+            color: #ffcc00;
+            animation: pulse 1.5s infinite;
+        }
+        .controls {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            flex-direction: column;
+        }
+        button, select, input {
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border: none;
+            background-color: #ffcc00;
+            color: black;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0px 4px 10px rgba(255, 204, 0, 0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px;
+        }
+        button:hover, select:hover, input:hover {
+            background-color: #e6b800;
+            transform: scale(1.1);
+            box-shadow: 0px 6px 15px rgba(255, 204, 0, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div id="timer">06:00</div>
+    <div class="controls">
+        <input type="number" id="minutes" placeholder="Minutes" min="0" max="99">
+        <input type="number" id="seconds" placeholder="Seconds" min="0" max="59">
+        <button id="startPause" onclick="toggleTimer()">Start</button>
+        <button onclick="toggleFullScreen()">Full Screen</button>
+        <button onclick="window.location.href='blog.html'">Blog</button>
+    </div>
+    <script>
+        let countdown;
+        let isPaused = true;
+        let remainingTime = 360;
+
+        function updateTimerDisplay() {
+            let minutes = Math.floor(remainingTime / 60);
+            let seconds = remainingTime % 60;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            document.getElementById('timer').textContent = `${minutes}:${seconds}`;
+        }
+
+        function toggleTimer() {
+            if (isPaused) {
+                startTimer();
+            } else {
+                pauseTimer();
+            }
+        }
+
+        function startTimer() {
+            clearInterval(countdown);
+            countdown = setInterval(() => {
+                if (remainingTime <= 0) {
+                    clearInterval(countdown);
+                    document.getElementById('timer').textContent = "00:00";
+                } else {
+                    remainingTime--;
+                    updateTimerDisplay();
+                }
+            }, 1000);
+            isPaused = false;
+            document.getElementById("startPause").textContent = "Pause";
+        }
+
+        function pauseTimer() {
+            clearInterval(countdown);
+            isPaused = true;
+            document.getElementById("startPause").textContent = "Start";
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+
+        document.getElementById("minutes").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                setNewTime();
+            }
+        });
+
+        document.getElementById("seconds").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                setNewTime();
+            }
+        });
+
+        function setNewTime() {
+            let minutesInput = parseInt(document.getElementById("minutes").value) || 0;
+            let secondsInput = parseInt(document.getElementById("seconds").value) || 0;
+            remainingTime = minutesInput * 60 + secondsInput;
+            updateTimerDisplay();
+        }
+    </script>
+</body>
+</html>
+s
